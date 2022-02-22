@@ -10,8 +10,8 @@ fi
 
 function install {
     # Install dependencies for dSIPRouter
-    apt-get install -y build-essential curl python3 python3-pip python-dev libmysqlclient-dev libmariadbclient-dev libpq-dev \
-        firewalld logrotate rsyslog perl libev-dev uuid-runtime libpq-dev
+    apt-get install -y build-essential curl python3 python3-pip python-dev libmariadbclient-dev libpq-dev \
+        firewalld logrotate rsyslog perl libev-dev uuid-runtime libpq-dev libmariadb-dev nginx
 
     # reset python cmd in case it was just installed
     setPythonCmd
