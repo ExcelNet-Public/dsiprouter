@@ -14,6 +14,7 @@
 # - CentOS 8
 # - CentOS 7
 # - Amazon Linux 2
+# - Ubuntu 20.04 (focal)
 # - Ubuntu 16.04 (xenial)
 #
 # Conventions:
@@ -110,6 +111,7 @@ setScriptSettings() {
     #KAM_VERSION=44 # Version 4.4.x
     #KAM_VERSION=51 # Version 5.1.x
     #KAM_VERSION=53 # Version 5.3.x
+    #KAM_VERSION=55 # Version 5.5.x
 
     # Uncomment and set this variable to an explicit Python executable file name
     # If set, the script will not try and find a Python version with 3.5 as the major release number
@@ -332,6 +334,9 @@ function validateOSInfo {
         esac
     elif [[ "$DISTRO" == "ubuntu" ]]; then
         case "$DISTRO_VER" in
+	    20.04)
+		KAM_VERSION=${KAM_VERSION:=55}
+		;;
             16.04)
                 KAM_VERSION=${KAM_VERSION:-51}
                 ;;
@@ -1579,6 +1584,8 @@ installDnsmasq() {
     # if systemd dns resolver installed disable it
     systemctl stop systemd-resolved 2>/dev/null
     systemctl disable systemd-resolved 2>/dev/null
+    mv -f /etc/resolv.conf /etc/resolv.conf.bak
+    echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
     # install dnsmasq
     if cmdExists 'apt-get'; then
