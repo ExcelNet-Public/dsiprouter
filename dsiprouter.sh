@@ -135,6 +135,12 @@ setScriptSettings() {
 
     #================= PRE_DYNAMIC_CONFIG_SETUP =================#
 
+    # create dsiprouter and kamailio user and group before trying to set permissions with them!
+    # sometimes locks aren't properly removed (this seems to happen often on VM's)
+    rm -f /etc/passwd.lock /etc/shadow.lock /etc/group.lock /etc/gshadow.lock
+    useradd --system --user-group --shell /bin/false --comment "dSIPRouter SIP Provider Platform" dsiprouter
+    useradd --system --user-group --shell /bin/false --comment "Kamailio SIP Proxy" kamailio
+
     # make sure dirs exist (ones that may not yet exist)
     mkdir -p ${DSIP_SYSTEM_CONFIG_DIR}{,/certs,/gui} ${SRC_DIR} ${BACKUPS_DIR} ${DSIP_RUN_DIR} ${DSIP_CERTS_DIR}
     # make sure the permissions on the $DSIP_RUN_DIR is correct, which is needed after a reboot
@@ -1893,7 +1899,7 @@ EOF
 
     if (( $RESET_KAM_DB_PASS == 1 )); then
 	mysql --user="$ROOT_DB_USER" --host="${KAM_DB_HOST}" --port="${KAM_DB_PORT}" $ROOT_DB_NAME \
-            -e "set password for $KAM_DB_USER@localhost = PASSWORD('${KAM_DB_PASS}');flush privileges"
+            -e "SET PASSWORD FOR $KAM_DB_USER@localhost = '${KAM_DB_PASS}';flush privileges"
     fi
 
     # can be hot reloaded while running

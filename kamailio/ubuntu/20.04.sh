@@ -15,9 +15,6 @@ function install {
 
     # create kamailio user and group
     mkdir -p /var/run/kamailio
-    # sometimes locks aren't properly removed (this seems to happen often on VM's)
-    rm -f /etc/passwd.lock /etc/shadow.lock /etc/group.lock /etc/gshadow.lock
-    useradd --system --user-group --shell /bin/false --comment "Kamailio SIP Proxy" kamailio
     chown -R kamailio:kamailio /var/run/kamailio
 
     grep -ioP '.*deb.kamailio.org/kamailio[0-9]* focal.*' /etc/apt/sources.list > /dev/null

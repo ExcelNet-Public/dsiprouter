@@ -19,7 +19,6 @@ function install {
     # create dsiprouter and nginx user and group
     # sometimes locks aren't properly removed (this seems to happen often on VM's)
     rm -f /etc/passwd.lock /etc/shadow.lock /etc/group.lock /etc/gshadow.lock
-    useradd --system --user-group --shell /bin/false --comment "dSIPRouter SIP Provider Platform" dsiprouter
     useradd --system --user-group --shell /bin/false --comment "nginx HTTP Service Provider" nginx
 
     # make sure the nginx user has access to dsiprouter directories
