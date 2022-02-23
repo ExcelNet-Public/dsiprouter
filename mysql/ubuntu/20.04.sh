@@ -13,37 +13,7 @@ function install {
     # ...
 
     # install mysql packages
-    apt-get install -y --allow-unauthenticated default-mysql-server ||
-        apt-get install -y --allow-unauthenticated mariadb-server
-
-    # alias mariadb.service to mysql.service and mysqld.service as in debian repo
-    # allowing us to use same service name (mysql, mysqld, or mariadb) across platforms
-    (cat << 'EOF'
-# Add mysql Aliases by including distro script as recommended in /lib/systemd/system/mariadb.service
-.include /lib/systemd/system/mariadb.service
-
-[Install]
-Alias=
-Alias=mysqld.service
-Alias=mariadb.service
-EOF
-    ) > /lib/systemd/system/mysql.service
-    chmod 0644 /lib/systemd/system/mysql.service
-    (cat << 'EOF'
-# Add mysql Aliases by including distro script as recommended in /lib/systemd/system/mariadb.service
-.include /lib/systemd/system/mariadb.service
-
-[Install]
-Alias=
-Alias=mysql.service
-Alias=mariadb.service
-EOF
-    ) > /lib/systemd/system/mysqld.service
-    chmod 0644 /lib/systemd/system/mysqld.service
-    systemctl daemon-reload
-
-    # if db is remote don't run local service
-    reconfigureMysqlSystemdService
+    apt-get install -y --allow-unauthenticated default-mysql-server
 
     # Enable mysql on boot
     systemctl enable mysql
@@ -69,15 +39,11 @@ function uninstall {
     systemctl stop mysql
     systemctl disable mysql
 
-    # Backup mysql / mariadb
+    # Backup mysql 
     mv -f /var/lib/mysql /var/lib/mysql.bak.$(date +%Y%m%d_%H%M%S)
 
-    # remove mysql unit files we created
-    rm -f /lib/systemd/system/mysql.service /lib/systemd/system/mysqld.service
-
-    # Uninstall mysql / mariadb packages
+    # Uninstall mysql packages
     apt-get -y remove --purge mysql\*
-    apt-get -y remove --purge mariadb\*
     rm -rf /etc/my.cnf*; rm -f /etc/my.cnf*; rm -f ~/*my.cnf
 
     # TODO: remove selinux/apparmor rules
